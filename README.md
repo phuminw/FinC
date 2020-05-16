@@ -1,6 +1,6 @@
 # FinC
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 9.1.5.
+A personal financial web application that gathers and summarize account information from all banks a user have.
 
 ## Development server
 
