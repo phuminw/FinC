@@ -1,0 +1,42 @@
+<!-- <button mat-button routerLink="/">App</button>   -->
+<!-- <button mat-button (click)="redirect()">Redirect</button> -->
+<router-outlet></router-outlet>
+<div class="accContainer grid">
+    <div *ngFor="let accBank of db" class="item">
+        <!-- <mat-accordion> -->
+        <mat-expansion-panel>
+            <mat-expansion-panel-header [collapsedHeight]="'150px'" class="bankHeaderContainer">
+                    <mat-panel-title class="bankHeader">{{ accBank.insName }}</mat-panel-title>
+                    <mat-panel-description>
+                        {{ accBank.accounts.length > 1 ? accBank.accounts.length + ' accounts' : accBank.accounts.length + ' account' }}
+                    </mat-panel-description>
+            </mat-expansion-panel-header>
+
+            <div *ngFor="let acc of accBank.accounts">
+                <mat-card class="individualAccounts">
+                    <div *ngIf="acc.type == 'depository' && acc.subtype != 'cd';then dep else other"></div>
+                    <ng-template #dep>
+                        <!-- <section class="mat-typography"> -->
+                        <mat-card-title>
+                            <h2 class="accName mat-h2">{{ acc.name }}</h2>
+                        </mat-card-title>
+                        <!-- </section> -->
+                        <mat-card-content>
+                            <p class="mat-body-1">Balance {{ acc.balances.current }}</p>
+                            <p class="mat-body-1">Available {{ acc.balances.available }}</p>
+                        </mat-card-content>
+                    </ng-template>
+                    <ng-template #other>
+                        <mat-card-title>
+                            <h2 class="accName mat-h2">{{ acc.name }}</h2>
+                        </mat-card-title>
+                        <mat-card-content>
+                            <p class="mat-body-1">Balance: {{ acc.balances.current }}</p>    
+                        </mat-card-content>
+                    </ng-template>
+                </mat-card>
+            </div>
+        </mat-expansion-panel>
+        <!-- </mat-accordion> -->
+    </div>
+</div>

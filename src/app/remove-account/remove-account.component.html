@@ -1,0 +1,8 @@
+<div class="accountsContainer">
+    <form [formGroup]="toRemoveForm" (ngSubmit)="removeAccount()">
+    <div *ngFor="let insSum of institutions" class="oneIns">
+        <mat-checkbox name="{{ insSum.insName }}" formControlName="{{ insSum.index }}">{{ insSum.insName }} ({{ insSum.accCount }} {{ insSum.accCount > 1 ? 'accounts' : 'account' }})</mat-checkbox>
+    </div>
+    <button mat-raised-button color="primary" type="submit">Submit</button>
+    </form>
+</div>
