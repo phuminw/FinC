@@ -12,6 +12,7 @@ import { MatExpansionModule } from '@angular/material/expansion';
 import { MatCardModule } from '@angular/material/card'
 import { MatCheckboxModule } from '@angular/material/checkbox'
 import { MatFormFieldModule } from '@angular/material/form-field'
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner'
 
 import { HomeComponent } from './home/home.component';
 import { HttpClientModule } from "@angular/common/http";
@@ -38,6 +39,7 @@ import { RemoveAccountComponent } from './remove-account/remove-account.componen
     MatCardModule,
     MatCheckboxModule,
     MatFormFieldModule,
+    MatProgressSpinnerModule,
     HttpClientModule
   ],
   providers: [PlaidService],

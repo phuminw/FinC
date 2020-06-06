@@ -19,28 +19,38 @@ export class RemoveAccountComponent implements OnInit {
   institutions: InstitutionSummary[] = []
   private indexToAccessToken: Object = {}
   toRemoveForm: FormGroup
+  fetchedAllIns: boolean
+  private totalInstitutions: number
 
   constructor(private plaidService: PlaidService, private mongoService: MongoService) {
     this.toRemoveForm = new FormGroup({})
+    this.fetchedAllIns = false
   }
 
   ngOnInit(): void {
     let i = 0
 
     this.mongoService.getAllAccounts()
-    .then(tokens => {
-      tokens.forEach(token => {
-        this.plaidService.getAccountsInfo(token)
-        .then(reply => {
-          this.institutions.push({insName: reply.insName, accCount: reply.accounts.length, accessToken: token, index: ++i})
-          this.toRemoveForm.addControl(`${i}`, new FormControl(false))
-          this.indexToAccessToken[`${i}`] = token
-          })
+      .then(tokens => {
+        this.totalInstitutions = tokens.length
+        
+        tokens.forEach(token => {
+          this.plaidService.getAccountsInfo(token)
+            .then(reply => {
+              this.institutions.push({ insName: reply.insName, accCount: reply.accounts.length, accessToken: token, index: ++i })
+              if (this.totalInstitutions == this.institutions.length) {
+                this.fetchedAllIns = true
+                this.institutions.forEach(ins => {
+                  this.toRemoveForm.addControl(`${ins.index}`, new FormControl(false))
+                  this.indexToAccessToken[`${ins.index}`] = token
+                })
+              }
+            })
         })
       })
-    .catch(err => {
-      console.error(`Query access tokens error ${err}`)
-    })
+      .catch(err => {
+        console.error(`Query access tokens error ${err}`)
+      })
   }
 
   removeAccount(): void {
@@ -48,7 +58,11 @@ export class RemoveAccountComponent implements OnInit {
       if (Object.prototype.hasOwnProperty.call(this.toRemoveForm.value, prop)) {
         if (this.toRemoveForm.value[prop]) {
           console.log(`Removing ${this.indexToAccessToken[prop]} from component`)
-          this.mongoService.removeAccount(this.indexToAccessToken[prop]).then(res => {console.log(`Removing ${res}`);location.reload()}, err => console.error(err))
+          let temp = this.mongoService.removeAccount(this.indexToAccessToken[prop])
+          temp.then(res => {
+            console.log(`Removing ${res}`)
+            location.replace('/')
+          }, err => console.error(err))
         }
       }
     }
