@@ -5,7 +5,7 @@ import { HomeComponent } from "./home/home.component";
 import { RemoveAccountComponent } from "./remove-account/remove-account.component";
 
 const routes: Routes = [
-  {path: '', redirectTo: '/', pathMatch: 'full'},
+  {path: '', redirectTo: '/home', pathMatch: 'full'},
   {path: 'addAccount', component: AddAccountComponent},
   {path: 'home', component: HomeComponent},
   {path: 'removeAccount', component: RemoveAccountComponent}
