@@ -1,15 +1,18 @@
 <!-- <button mat-button routerLink="/">App</button>   -->
 <!-- <button mat-button (click)="redirect()">Redirect</button> -->
 <router-outlet></router-outlet>
-<div class="accContainer grid">
+<div class="spinner" *ngIf="!fetchedAllInstitutions">
+    <mat-spinner></mat-spinner>
+</div>
+<div *ngIf="fetchedAllInstitutions" class="accContainer grid">
     <div *ngFor="let accBank of db" class="item">
         <!-- <mat-accordion> -->
         <mat-expansion-panel>
             <mat-expansion-panel-header [collapsedHeight]="'150px'" class="bankHeaderContainer">
-                    <mat-panel-title class="bankHeader">{{ accBank.insName }}</mat-panel-title>
-                    <mat-panel-description>
-                        {{ accBank.accounts.length > 1 ? accBank.accounts.length + ' accounts' : accBank.accounts.length + ' account' }}
-                    </mat-panel-description>
+                <mat-panel-title class="bankHeader">{{ accBank.insName }}</mat-panel-title>
+                <mat-panel-description>
+                    {{ accBank.accounts.length > 1 ? accBank.accounts.length + ' accounts' : accBank.accounts.length + ' account' }}
+                </mat-panel-description>
             </mat-expansion-panel-header>
 
             <div *ngFor="let acc of accBank.accounts">
@@ -31,7 +34,7 @@
                             <h2 class="accName mat-h2">{{ acc.name }}</h2>
                         </mat-card-title>
                         <mat-card-content>
-                            <p class="mat-body-1">Balance: {{ acc.balances.current }}</p>    
+                            <p class="mat-body-1">Balance: {{ acc.balances.current }}</p>
                         </mat-card-content>
                     </ng-template>
                 </mat-card>

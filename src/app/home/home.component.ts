@@ -9,19 +9,24 @@ import { MongoService } from "../mongo.service";
   styleUrls: ['./home.component.css']
 })
 export class HomeComponent implements OnInit {
-  // private bankName: string
+  private totalInstitutions: number
+  fetchedAllInstitutions: boolean
   db: AccountReply[]
 
   constructor(private router: Router, private plaidService: PlaidService, private mongoService: MongoService) {
     this.db = []
+    this.fetchedAllInstitutions = false
   }
 
   ngOnInit(): void {
     this.mongoService.getAllAccounts().then(accessTokens => {
-      console.log(accessTokens)
+      this.totalInstitutions = accessTokens.length
+
       accessTokens.forEach(at => {
         this.plaidService.getAccountsInfo(at).then(accInfo => {
           this.db.push(accInfo)
+          if (this.db.length == this.totalInstitutions)
+            this.fetchedAllInstitutions = true
         })
         .catch(err => {
           console.error(`Query account info ${at} from Plaid error ` + err)
