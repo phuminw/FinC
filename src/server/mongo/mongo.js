@@ -10,7 +10,9 @@ let userDb
 /* Begin DB connection section */
 
 mongo.connect(config.DBURI+config.DBNAME, {useUnifiedTopology: true})
-.then(res => {db = res.db()
+.then(res => {
+    db = res.db()
+
     if (db === undefined) {
         console.error('db connection failed')
         exit(-1)

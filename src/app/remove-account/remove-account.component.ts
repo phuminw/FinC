@@ -60,7 +60,6 @@ export class RemoveAccountComponent implements OnInit {
           console.log(`Removing ${this.indexToAccessToken[prop]} from component`)
           let temp = this.mongoService.removeAccount(this.indexToAccessToken[prop])
           temp.then(res => {
-            console.log(`Removing ${res}`)
             location.replace('/')
           }, err => console.error(err))
         }
