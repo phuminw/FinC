@@ -11,6 +11,7 @@ import { MongoService } from "../mongo.service";
 export class HomeComponent implements OnInit {
   private totalInstitutions: number
   fetchedAllInstitutions: boolean
+  noAccount: boolean
   db: AccountReply[]
 
   constructor(private router: Router, private plaidService: PlaidService, private mongoService: MongoService) {
@@ -22,16 +23,21 @@ export class HomeComponent implements OnInit {
     this.mongoService.getAllAccounts().then(accessTokens => {
       this.totalInstitutions = accessTokens.length
 
-      accessTokens.forEach(at => {
-        this.plaidService.getAccountsInfo(at).then(accInfo => {
-          this.db.push(accInfo)
-          if (this.db.length == this.totalInstitutions)
-            this.fetchedAllInstitutions = true
+      if (accessTokens.length == 0) {
+        this.fetchedAllInstitutions = true
+        this.noAccount = true
+      }
+      else
+        accessTokens.forEach(at => {
+          this.plaidService.getAccountsInfo(at).then(accInfo => {
+            this.db.push(accInfo)
+            if (this.db.length == this.totalInstitutions)
+              this.fetchedAllInstitutions = true
+          })
+          .catch(err => {
+            console.error(`Query account info ${at} from Plaid error ` + err)
+          })
         })
-        .catch(err => {
-          console.error(`Query account info ${at} from Plaid error ` + err)
-        })
-      })
     })
     .catch(err => {
       console.error(err)

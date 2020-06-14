@@ -1,15 +1,23 @@
 const router = require('express').Router()
-const crypto = require('crypto');
 
+/* Hashing */
+const crypto = require('crypto')
+const bcrypt = require('bcrypt')
+const SALTROUNDS = 10
+
+const jwt = require('jsonwebtoken')
+const jwtConfig = require('./jwt.config')
+
+/* MongoDB */
 const mongo = require('mongodb').MongoClient // Mongo client
-const config = require('../mongo/mongo.config')
+const dbConfig = require('../mongo/mongo.config')
 
 let db
 let userDb
 
 /* Begin DB connection section */
 
-mongo.connect(config.DBURI+config.DBNAME, {useUnifiedTopology: true})
+mongo.connect(dbConfig.DBURI+dbConfig.DBNAME, {useUnifiedTopology: true})
 .then(res => {
     db = res.db()
 
@@ -18,7 +26,7 @@ mongo.connect(config.DBURI+config.DBNAME, {useUnifiedTopology: true})
         exit(-1)
     }
 
-    userDb = db.collection(config.COLLECTION)
+    userDb = db.collection(dbConfig.COLLECTION)
 })
 .catch(err => {console.error("Mongo connection failed");exit(-1)})
 
@@ -42,17 +50,16 @@ router.route('/signup').post((req, res, next) => {
             })
         else {
             let salt = crypto.randomBytes(64).toString('hex')
-            const sha256 = crypto.createHash('sha256')
             
             userDb.insertOne({
                 username: req.body.username,
-                password: sha256.update(req.body.password+salt).digest('hex'),
+                password: bcrypt.hashSync(req.body.password+salt, SALTROUNDS), // sha256.update(req.body.password+salt).digest('hex'),
                 salt: salt,
                 accounts: []
             })
             .then(result => {
                 res.status(200).send({
-                    success: false,
+                    success: true,
                     error: ''
                 })
             })
@@ -71,28 +78,25 @@ router.route('/signup').post((req, res, next) => {
  */
 
 router.route('/login').post((req, res, next) => {
-    userDb.find({username: req.body.username}, {projection: {_id:0, password:1, salt:1}}).toArray((err, result) => {
+    userDb.find({username: req.body.username}, {projection: {_id:0, username:1, password:1, salt:1}}).toArray((err, result) => {
         if (err !== null) // Internal server error
             res.status(500).send({
                 success: false,
                 error: err.message
             })
         else {
-            const sha256 = crypto.createHash('sha256')
-            const pwdigest = sha256.update(req.body.password+result[0].salt).digest('hex')
             // No such username or invalid password
             if (result.length === 0 ||
-                result[0].password !== pwdigest)
+                !bcrypt.compareSync(req.body.password+result[0].salt, result[0].password))
                 res.status(400).send({
                     success: false,
                     error: 'Username and/or password does not match any record'
                 })
-            else if (result[0].password === pwdigest)
-                res.status(200).send({
-                    success: true,
-                    error: '',
-                    JWT: "PLACEHOLDER FOR SUCCESS TOKEN"
-                })
+            else if (bcrypt.compareSync(req.body.password+result[0].salt, result[0].password))
+                res
+                .status(200)
+                .cookie('accessToken', jwt.sign({username: result[0].username}, jwtConfig.secret, {expiresIn: '1d'}), {maxAge: 86400*1000})
+                .send()
             else
                 res.status(500).send({
                     success: false,
@@ -102,4 +106,27 @@ router.route('/login').post((req, res, next) => {
     })
 })
 
-module.exports = router
+const verifyUser = (req, res, next) => {
+    let token = req.cookies.accessToken
+
+    if (!token)
+        return res.status(403).send({
+            success: false,
+            error: "No token provided!"
+        })
+    else {
+        jwt.verify(token, jwtConfig.secret, (err, decoded) => {
+            if (err)
+                return res.status(401).send({
+                    success: false,
+                    error: "Unauthorized or Invalid token!"
+                })
+            else {
+                req.username = decoded.username
+                next()
+            }
+        })
+    }
+}
+
+module.exports = {router, verifyUser}

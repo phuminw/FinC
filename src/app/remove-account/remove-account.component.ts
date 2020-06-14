@@ -20,6 +20,7 @@ export class RemoveAccountComponent implements OnInit {
   private indexToAccessToken: Object = {}
   toRemoveForm: FormGroup
   fetchedAllIns: boolean
+  noAccount: boolean
   private totalInstitutions: number
 
   constructor(private plaidService: PlaidService, private mongoService: MongoService) {
@@ -33,20 +34,26 @@ export class RemoveAccountComponent implements OnInit {
     this.mongoService.getAllAccounts()
       .then(tokens => {
         this.totalInstitutions = tokens.length
+
+        if (tokens.length == 0) {
+          this.fetchedAllIns = true
+          this.noAccount = true
+        }
         
-        tokens.forEach(token => {
-          this.plaidService.getAccountsInfo(token)
-            .then(reply => {
-              this.institutions.push({ insName: reply.insName, accCount: reply.accounts.length, accessToken: token, index: ++i })
-              if (this.totalInstitutions == this.institutions.length) {
-                this.fetchedAllIns = true
-                this.institutions.forEach(ins => {
-                  this.toRemoveForm.addControl(`${ins.index}`, new FormControl(false))
-                  this.indexToAccessToken[`${ins.index}`] = token
-                })
-              }
-            })
-        })
+        else
+          tokens.forEach(token => {
+            this.plaidService.getAccountsInfo(token)
+              .then(reply => {
+                this.institutions.push({ insName: reply.insName, accCount: reply.accounts.length, accessToken: token, index: ++i })
+                if (this.totalInstitutions == this.institutions.length) {
+                  this.fetchedAllIns = true
+                  this.institutions.forEach(ins => {
+                    this.toRemoveForm.addControl(`${ins.index}`, new FormControl(false))
+                    this.indexToAccessToken[`${ins.index}`] = token
+                  })
+                }
+              })
+          })
       })
       .catch(err => {
         console.error(`Query access tokens error ${err}`)

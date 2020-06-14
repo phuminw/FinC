@@ -12,7 +12,7 @@ router.route('/plaidPTHandler').post((req, res) => {
     plaidClient.exchangePublicToken(req.body.publictoken)
     .then((tokenResponse) => {
         let accessToken = tokenResponse.access_token
-        userDb.updateOne({username: req.body.username}, {$addToSet:{
+        userDb.updateOne({username: req.username}, {$addToSet:{
             accounts: tokenResponse.access_token
         }})
         console.log(`Added ${tokenResponse.access_token} to mongo from server`)

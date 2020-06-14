@@ -4,6 +4,13 @@
 <div class="spinner" *ngIf="!fetchedAllInstitutions">
     <mat-spinner></mat-spinner>
 </div>
+<div *ngIf="noAccount">
+    <h3 class="mat-display-3 noAccountMessage">
+        It is quite empty here ...
+        <br><br>
+        Please add at least one account
+    </h3>
+</div>
 <div *ngIf="fetchedAllInstitutions" class="accContainer grid">
     <div *ngFor="let accBank of db" class="item">
         <!-- <mat-accordion> -->

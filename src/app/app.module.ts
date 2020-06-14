@@ -13,19 +13,24 @@ import { MatCardModule } from '@angular/material/card'
 import { MatCheckboxModule } from '@angular/material/checkbox'
 import { MatFormFieldModule } from '@angular/material/form-field'
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner'
+import { MatIconModule } from '@angular/material/icon'
+import { MatInputModule } from '@angular/material/input'
+import { MatMenuModule } from '@angular/material/menu';
 
 import { HomeComponent } from './home/home.component';
 import { HttpClientModule } from "@angular/common/http";
 
 import { PlaidService } from "./plaid.service";
 import { RemoveAccountComponent } from './remove-account/remove-account.component';
+import { LoginComponent } from './login/login.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     AddAccountComponent,
     HomeComponent,
-    RemoveAccountComponent
+    RemoveAccountComponent,
+    LoginComponent
   ],
   imports: [
     BrowserModule,
@@ -40,6 +45,9 @@ import { RemoveAccountComponent } from './remove-account/remove-account.componen
     MatCheckboxModule,
     MatFormFieldModule,
     MatProgressSpinnerModule,
+    MatIconModule,
+    MatInputModule,
+    MatMenuModule,
     HttpClientModule
   ],
   providers: [PlaidService],

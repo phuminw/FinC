@@ -1,14 +1,19 @@
-<div class="accountsContainer">
+<div *ngIf="noAccount">
+    <h3 class="mat-display-3 noAccountMessage">
+        It is quite empty here ...
+        <br><br>
+        Please add at least one account
+    </h3>
+</div>
     <div class="removeFormContainer">
         <mat-spinner *ngIf="!fetchedAllIns"></mat-spinner>
-        <form *ngIf="fetchedAllIns" [formGroup]="toRemoveForm" (ngSubmit)="removeAccount()">
+        <form *ngIf="!noAccount && fetchedAllIns" [formGroup]="toRemoveForm" (ngSubmit)="removeAccount()">
             <div *ngFor="let insSum of institutions" class="oneIns">
                 <mat-checkbox name="{{ insSum.insName }}" formControlName="{{ insSum.index }}">{{ insSum.insName }}
                     ({{ insSum.accCount }} {{ insSum.accCount > 1 ? 'accounts' : 'account' }})</mat-checkbox>
                 <br>
             </div>
             <br>
-            <button mat-raised-button color="primary" type="submit">Submit</button>
+            <button mat-raised-button *ngIf="!noAccount && fetchedAllIns" color="primary" type="submit">Submit</button>
         </form>
     </div>
-</div>

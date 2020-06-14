@@ -27,7 +27,7 @@ mongo.connect(config.DBURI+config.DBNAME, {useUnifiedTopology: true})
 /* Mongo: Accounts query: get all accounts access token from db */
 router.route('/getAccounts').get((req, res) => {
     console.log("Got getAccounts query")
-    userDb.find({username: req.query.username}, {projection:{_id:0, accounts:1}}).toArray((err, items) => {
+    userDb.find({username: req.username}, {projection:{_id:0, accounts:1}}).toArray((err, items) => {
         if (items.length > 0)
             res.send({
                 success: true,
@@ -42,9 +42,9 @@ router.route('/getAccounts').get((req, res) => {
 
 router.route('/removeAccount').post((req, res) => {
     console.log(req.body)
-    console.log(`Express removing ${req.body.accessToken} from ${req.body.username}`)
+    console.log(`Express removing ${req.body.accessToken} from ${req.username}`)
     res.send({success: true})
-    // userDb.updateOne({username: req.body.username}, {$pull: {accounts: req.body.accessToken}})
+    // userDb.updateOne({username: req.username}, {$pull: {accounts: req.body.accessToken}})
     // .then(updateRes => {
     //     if (updateRes.result.ok && updateRes.result.nModified > 0)
     //         res.send({success: true})
