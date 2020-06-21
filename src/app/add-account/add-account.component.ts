@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core'
 import { PlaidService } from "../plaid.service";
+import { MongoService } from "../mongo.service";
 
 @Component({
   selector: 'app-add-account',
@@ -7,9 +8,14 @@ import { PlaidService } from "../plaid.service";
   styleUrls: ['./add-account.component.css']
 })
 export class AddAccountComponent implements OnInit {  
-  constructor(private plaidService: PlaidService) { }
+  noAccount: boolean
+
+  constructor(private plaidService: PlaidService, private mongoService: MongoService) { }
   
-  ngOnInit(): void {
-    this.plaidService.getAccessToken()
+  async ngOnInit() {
+    if ((await this.mongoService.getAllAccounts()).length == 0)
+      this.noAccount = true
+    else
+      this.plaidService.getAccessToken()
   }
 }

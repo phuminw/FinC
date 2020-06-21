@@ -1,5 +1,13 @@
 # FinC
 
+## Implementation List
+
+- [ ] Fix no account message (should be more informative whether not logged in or no account)
+- [ ] Centralize interface accross Angular components
+- [ ] Check username instead of account number (Angular component checking whether no account)
+- [ ] Move Plaid account query to back-end. No access token must be sent to the front-end
+- [ ] Prevent /login from loggedin user and same for /logout
+
 ## Development server
 
 Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The app will automatically reload if you change any of the source files.

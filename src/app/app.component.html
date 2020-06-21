@@ -1,16 +1,22 @@
-<mat-toolbar color="primary">  
-  <h1>FinC</h1>  
-  <button mat-button routerLink="/home">Home</button>  
+<mat-toolbar color="primary">
+  <h1>FinC</h1>
+  <button mat-button routerLink="/home">Home</button>
   <button mat-button routerLink="/addAccount">Add Account</button>
   <button mat-button routerLink="/removeAccount">Remove Account</button>
+  
+  <span class="fill-toolbar"></span>
+  <span flex></span>
 
   <button mat-button [matMenuTriggerFor]="belowMenu">
-    USERNAME
-    <mat-icon role="img" class="mat-icon notranslate material-icons mat-icon-no-color" aria-hidden="true">arrow_drop_down</mat-icon>
+    {{username}}
+    <mat-icon role="img" class="mat-icon notranslate material-icons mat-icon-no-color" aria-hidden="true">
+      arrow_drop_down</mat-icon>
   </button>
-  <mat-menu #belowMenu="matMenu" yPosition="below">
-    <button mat-menu-item>Login</button>
-    <button mat-menu-item>Logout</button>
-  </mat-menu>
+    <mat-menu #belowMenu="matMenu" yPosition="below">
+      <button mat-menu-item routerLink="/login" *ngIf="!loggedin">Login</button>
+      <form action="/api/user/logout">
+      <button mat-menu-item routerLink="/logout" *ngIf="loggedin" type="submit">Logout</button>
+      </form>
+    </mat-menu>
 </mat-toolbar>
 <router-outlet></router-outlet>

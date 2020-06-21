@@ -10,11 +10,30 @@ interface DBUpdateReply {
   success: boolean
 }
 
+interface UsernameReply {
+  success: boolean,
+  username?: string
+}
+
 @Injectable({
   providedIn: 'root'
 })
 export class MongoService {
   constructor(private http: HttpClient) {
+  }
+
+  getUsername(): Promise<string> {
+    return this.http.get<UsernameReply>('/api/db/getUsername').toPromise()
+    .then(res => {
+      if (res.success)
+        return res.username
+      else
+        return "Guest"
+    })
+    .catch(err => {
+      console.log(err)
+      return "Guest"
+    })
   }
 
   getAllAccounts(): Promise<string[]> {

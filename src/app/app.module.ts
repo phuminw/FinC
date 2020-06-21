@@ -23,6 +23,7 @@ import { HttpClientModule } from "@angular/common/http";
 import { PlaidService } from "./plaid.service";
 import { RemoveAccountComponent } from './remove-account/remove-account.component';
 import { LoginComponent } from './login/login.component';
+import { LogoutComponent } from './logout/logout.component';
 
 @NgModule({
   declarations: [
@@ -30,7 +31,8 @@ import { LoginComponent } from './login/login.component';
     AddAccountComponent,
     HomeComponent,
     RemoveAccountComponent,
-    LoginComponent
+    LoginComponent,
+    LogoutComponent
   ],
   imports: [
     BrowserModule,

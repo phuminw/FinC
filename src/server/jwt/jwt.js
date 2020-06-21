@@ -9,34 +9,14 @@ const jwt = require('jsonwebtoken')
 const jwtConfig = require('./jwt.config')
 
 /* MongoDB */
-const mongo = require('mongodb').MongoClient // Mongo client
-const dbConfig = require('../mongo/mongo.config')
-
-let db
-let userDb
-
-/* Begin DB connection section */
-
-mongo.connect(dbConfig.DBURI+dbConfig.DBNAME, {useUnifiedTopology: true})
-.then(res => {
-    db = res.db()
-
-    if (db === undefined) {
-        console.error('db connection failed')
-        exit(-1)
-    }
-
-    userDb = db.collection(dbConfig.COLLECTION)
-})
-.catch(err => {console.error("Mongo connection failed");exit(-1)})
-
-/* End DB connection section */
+const mongoConnection = require('../mongo/mongo.connection')
 
 /**
  * Sign up a user
  */
 
-router.route('/signup').post((req, res, next) => {
+router.route('/signup').post(async (req, res, next) => {
+    let userDb = await mongoConnection.getCollection('user')
     userDb.find({username: req.body.username}, {projection:{_id:0}}).toArray((err, items) => {
         if (err !== null) // Interal mongo error
             res.status(500).send({
@@ -77,7 +57,9 @@ router.route('/signup').post((req, res, next) => {
  * Authenticate user and return JWT
  */
 
-router.route('/login').post((req, res, next) => {
+router.route('/login').post(async (req, res, next) => {
+    // let userDb = (await mongoConnection.getDb()).collection('user')
+    let userDb = await mongoConnection.getCollection('user')
     userDb.find({username: req.body.username}, {projection: {_id:0, username:1, password:1, salt:1}}).toArray((err, result) => {
         if (err !== null) // Internal server error
             res.status(500).send({
@@ -94,9 +76,9 @@ router.route('/login').post((req, res, next) => {
                 })
             else if (bcrypt.compareSync(req.body.password+result[0].salt, result[0].password))
                 res
-                .status(200)
-                .cookie('accessToken', jwt.sign({username: result[0].username}, jwtConfig.secret, {expiresIn: '1d'}), {maxAge: 86400*1000})
-                .send()
+                    .status(200)
+                    .cookie('accessToken', jwt.sign({username: result[0].username}, jwtConfig.secret, {expiresIn: '1d'}), {maxAge: 86400*1000, httpOnly: true})
+                    .send()
             else
                 res.status(500).send({
                     success: false,
@@ -104,6 +86,10 @@ router.route('/login').post((req, res, next) => {
                 })
         }
     })
+})
+
+router.route('/logout').post((req, res, next) => {
+    res.clearCookie('accessToken').send({success: true})
 })
 
 const verifyUser = (req, res, next) => {
@@ -117,7 +103,7 @@ const verifyUser = (req, res, next) => {
     else {
         jwt.verify(token, jwtConfig.secret, (err, decoded) => {
             if (err)
-                return res.status(401).send({
+                return res.status(401).clearCookie('accessToken').send({
                     success: false,
                     error: "Unauthorized or Invalid token!"
                 })
