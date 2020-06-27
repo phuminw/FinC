@@ -1,14 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormControl } from "@angular/forms";
-import { PlaidService } from "../plaid.service";
 import { MongoService } from "../mongo.service";
-
-interface InstitutionSummary {
-  insName: string,
-  accCount: number,
-  accessToken: string,
-  index: number
-}
+import { InstitutionSummary } from "../interface";
 
 @Component({
   selector: 'app-remove-account',
@@ -16,61 +9,45 @@ interface InstitutionSummary {
   styleUrls: ['./remove-account.component.css']
 })
 export class RemoveAccountComponent implements OnInit {
-  institutions: InstitutionSummary[] = []
-  private indexToAccessToken: Object = {}
+  institutions: InstitutionSummary[]
   toRemoveForm: FormGroup
-  fetchedAllIns: boolean
-  noAccount: boolean
-  private totalInstitutions: number
+  fetchedAllInstitutions: boolean
+  totalInstitutions: number
 
-  constructor(private plaidService: PlaidService, private mongoService: MongoService) {
+  serverError: boolean
+  serverErrorMessage: string
+
+  constructor(private mongoService: MongoService) {
     this.toRemoveForm = new FormGroup({})
-    this.fetchedAllIns = false
+    this.fetchedAllInstitutions = false
   }
 
-  ngOnInit(): void {
-    let i = 0
+  async ngOnInit() {
+      this.institutions = (await this.mongoService.getInsSummary())
+      for (let i = 0 ; i < this.institutions.length ; i++)
+        this.toRemoveForm.addControl(this.institutions[i].id, new FormControl(false))
 
-    this.mongoService.getAllAccounts()
-      .then(tokens => {
-        this.totalInstitutions = tokens.length
-
-        if (tokens.length == 0) {
-          this.fetchedAllIns = true
-          this.noAccount = true
-        }
-        
-        else
-          tokens.forEach(token => {
-            this.plaidService.getAccountsInfo(token)
-              .then(reply => {
-                this.institutions.push({ insName: reply.insName, accCount: reply.accounts.length, accessToken: token, index: ++i })
-                if (this.totalInstitutions == this.institutions.length) {
-                  this.fetchedAllIns = true
-                  this.institutions.forEach(ins => {
-                    this.toRemoveForm.addControl(`${ins.index}`, new FormControl(false))
-                    this.indexToAccessToken[`${ins.index}`] = token
-                  })
-                }
-              })
-          })
-      })
-      .catch(err => {
-        console.error(`Query access tokens error ${err}`)
-      })
+    this.fetchedAllInstitutions = true
   }
 
-  removeAccount(): void {
+  async removeAccount() {
+    let rm_ids = [] as string[]
+
     for (let prop in this.toRemoveForm.value) {
       if (Object.prototype.hasOwnProperty.call(this.toRemoveForm.value, prop)) {
         if (this.toRemoveForm.value[prop]) {
-          console.log(`Removing ${this.indexToAccessToken[prop]} from component`)
-          let temp = this.mongoService.removeAccount(this.indexToAccessToken[prop])
-          temp.then(res => {
-            location.replace('/')
-          }, err => console.error(err))
+          rm_ids.push(prop)
         }
       }
+    }
+
+    let response = await this.mongoService.removeInstitutions(rm_ids)
+    if (response === true)
+      window.location.replace('/')
+    else {
+      // TODO: Display internal server error message on component HTML and setTimeout for redirect
+      this.serverError = true
+      this.serverErrorMessage = (response === false) ? "Cannot connect to the server" : response
     }
   }
 }

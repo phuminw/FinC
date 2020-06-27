@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { MongoService } from "./mongo.service";
+import { UserService } from "./user.service";
 
 @Component({
   selector: 'app-root',
@@ -12,7 +13,7 @@ export class AppComponent implements OnInit {
   username: string
   loggedin: boolean
   
-  constructor(private mongoService: MongoService) {
+  constructor(private mongoService: MongoService, private userService: UserService) {
 
   }
 

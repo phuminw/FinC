@@ -1,19 +1,23 @@
-<div *ngIf="noAccount">
+<div *ngIf="!serverError && fetchedAllInstitutions && institutions.length == 0">
     <h3 class="mat-display-3 noAccountMessage">
         It is quite empty here ...
         <br><br>
         Please add at least one account
     </h3>
 </div>
-    <div class="removeFormContainer">
-        <mat-spinner *ngIf="!fetchedAllIns"></mat-spinner>
-        <form *ngIf="!noAccount && fetchedAllIns" [formGroup]="toRemoveForm" (ngSubmit)="removeAccount()">
-            <div *ngFor="let insSum of institutions" class="oneIns">
-                <mat-checkbox name="{{ insSum.insName }}" formControlName="{{ insSum.index }}">{{ insSum.insName }}
-                    ({{ insSum.accCount }} {{ insSum.accCount > 1 ? 'accounts' : 'account' }})</mat-checkbox>
-                <br>
-            </div>
+<div *ngIf="serverError">
+    <h3 class="mat-display-3 noAccountMessage">
+        {{serverErrorMessage}}
+    </h3>
+</div>
+<mat-spinner *ngIf="!fetchedAllInstitutions"></mat-spinner>
+<div class="removeFormContainer">
+    <form *ngIf="fetchedAllInstitutions && institutions.length > 0" [formGroup]="toRemoveForm" (ngSubmit)="removeAccount()">
+        <div *ngFor="let ins of institutions" class="oneIns">
+            <mat-checkbox name="{{ ins.institution_name }}" formControlName="{{ ins.id }}">{{ ins.institution_name }}</mat-checkbox>
             <br>
-            <button mat-raised-button *ngIf="!noAccount && fetchedAllIns" color="primary" type="submit">Submit</button>
-        </form>
-    </div>
+        </div>
+        <br>
+        <button mat-raised-button color="primary" type="submit">Submit</button>
+    </form>
+</div>

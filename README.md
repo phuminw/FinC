@@ -2,11 +2,19 @@
 
 ## Implementation List
 
-- [ ] Fix no account message (should be more informative whether not logged in or no account)
-- [ ] Centralize interface accross Angular components
-- [ ] Check username instead of account number (Angular component checking whether no account)
-- [ ] Move Plaid account query to back-end. No access token must be sent to the front-end
+- [x] Fix no account message (should be more informative whether not logged in or no account)
+- [x] Redirect to login page if not login on all components
+- [x] Centralize interface accross Angular components
+- [x] Check username instead of account number (Angular component checking whether no account)
 - [ ] Prevent /login from loggedin user and same for /logout
+- [x] Change jQuery to fetch API
+- [x] Move Plaid account query to back-end. No access token must be sent to the front-end
+- [x] Batch institutions query on back-end
+- [x] Use some kind of id to identify to-be-removed institutions on remove-account
+- [x] .then() and .catch() to async/await
+- [ ] Strong password check
+- [ ] Add support for multiple accounts from same institution.
+- [ ] Forgot username/password
 
 ## Development server
 

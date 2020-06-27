@@ -4,7 +4,8 @@ import { PlaidConfig } from "ngx-plaid-link/lib/interfaces"
 import { PlaidLinkHandler } from "ngx-plaid-link/lib/ngx-plaid-link-handler"
 import { HttpClient } from "@angular/common/http";
 import * as plaid from "plaid"
-import * as $ from "jquery";
+import fetch from "node-fetch";
+import { Router } from '@angular/router';
 
 export interface AccountReply {
     success: boolean,
@@ -28,41 +29,54 @@ export class PlaidService {
     product: ["transactions"],
     onSuccess: this.onSuccess,
     onExit: this.onExit,
-    clientName: "Finc Client Service"
+    clientName: "Finc",
   }
   
-  constructor(private http: HttpClient) {
+  constructor(private http: HttpClient, private router: Router) {
     this.plaidService = new NgxPlaidLinkService()
   }
 
   /* Plaid Link Section */
 
   /**
-   * Going through Plaid Link procedure and record acces token to db
+   * Going through Plaid Link procedure and record access token to db
    * 
    * @return user access token
    */
 
-  getAccessToken(): void {
-    if (this.plaidLinkHandler == null) {
-      this.plaidService.createPlaid(this.config)
-      .then((handler: PlaidLinkHandler) => {
-        this.plaidLinkHandler = handler
+  async getAccessToken(): Promise<boolean> {
+    try {
+      if (this.plaidLinkHandler == null) {
+        this.plaidLinkHandler = await this.plaidService.createPlaid(this.config)
         this.plaidLinkHandler.open()
-      })
-      .catch(err => console.error("Plaid service initialization failed: " + err))
-    }
-    else {
-      this.plaidLinkHandler.open()
+      }
+      else {
+        this.plaidLinkHandler.open()
+      }
+
+      return true
+    } catch (_) {
+      window.location.replace('/')
     }
   }
 
-  onSuccess(publictoken: string, metadata): void {
-    $.post('/api/plaid/plaidPTHandler', {username: "phuminw", publictoken: publictoken})
+  async onSuccess(publictoken: string) {
+    if ((await (await fetch('/api/plaid/plaidPTHandler', {
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      method: 'POST',
+      body: JSON.stringify({publictoken: publictoken})
+    })).json()).success) {
+      window.location.replace('/')
+      // this.router.navigateByUrl('/')
+    }
+    // $.post('/api/plaid/plaidPTHandler', {username: "phuminw", publictoken: publictoken})
   }
 
-  onExit(error, metadata) {
-
+  onExit(_error, _metadata) {
+    window.location.replace('/')
+    // this.router.navigateByUrl('/auth/home')
   }
 
   /* Plaid Client Section */
@@ -76,17 +90,17 @@ export class PlaidService {
    * 
    * @param accessToken 
    */
-  getAccountsInfo(accessToken: string): Promise<AccountReply> {
-    return this.http.get<AccountReply>('/api/plaid/getAccountsInfo', {params: {
-      accessToken: accessToken
-    }}).toPromise()
-    .then(res => {
-      return res
-    })
-    .catch(err => {
-      console.log(err)
-      return null
-    })
-  }
+  // getAccountsInfo(accessToken: string): Promise<AccountReply> {
+  //   return this.http.get<AccountReply>('/api/plaid/getAccountsInfo', {params: {
+  //     accessToken: accessToken
+  //   }}).toPromise()
+  //   .then(res => {
+  //     return res
+  //   })
+  //   .catch(err => {
+  //     console.log(err)
+  //     return null
+  //   })
+  // }
 
 }

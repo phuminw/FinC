@@ -39,8 +39,7 @@ router.route('/signup').post(async (req, res, next) => {
             })
             .then(result => {
                 res.status(200).send({
-                    success: true,
-                    error: ''
+                    success: true
                 })
             })
             .catch(err => {
@@ -58,7 +57,6 @@ router.route('/signup').post(async (req, res, next) => {
  */
 
 router.route('/login').post(async (req, res, next) => {
-    // let userDb = (await mongoConnection.getDb()).collection('user')
     let userDb = await mongoConnection.getCollection('user')
     userDb.find({username: req.body.username}, {projection: {_id:0, username:1, password:1, salt:1}}).toArray((err, result) => {
         if (err !== null) // Internal server error
@@ -77,8 +75,8 @@ router.route('/login').post(async (req, res, next) => {
             else if (bcrypt.compareSync(req.body.password+result[0].salt, result[0].password))
                 res
                     .status(200)
-                    .cookie('accessToken', jwt.sign({username: result[0].username}, jwtConfig.secret, {expiresIn: '1d'}), {maxAge: 86400*1000, httpOnly: true})
-                    .send()
+                    .cookie('access_token', jwt.sign({username: result[0].username}, jwtConfig.secret, {expiresIn: '1d'}), {maxAge: 86400*1000, httpOnly: true})
+                    .send({success: true})
             else
                 res.status(500).send({
                     success: false,
@@ -89,11 +87,11 @@ router.route('/login').post(async (req, res, next) => {
 })
 
 router.route('/logout').post((req, res, next) => {
-    res.clearCookie('accessToken').send({success: true})
+    res.clearCookie('access_token').send({success: true})
 })
 
 const verifyUser = (req, res, next) => {
-    let token = req.cookies.accessToken
+    let token = req.cookies.access_token
 
     if (!token)
         return res.status(403).send({
@@ -103,7 +101,7 @@ const verifyUser = (req, res, next) => {
     else {
         jwt.verify(token, jwtConfig.secret, (err, decoded) => {
             if (err)
-                return res.status(401).clearCookie('accessToken').send({
+                return res.status(401).clearCookie('access_token').send({
                     success: false,
                     error: "Unauthorized or Invalid token!"
                 })

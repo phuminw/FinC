@@ -7,7 +7,7 @@ const app = express() // Express
 const {verify} = require('jsonwebtoken')
 
 const mongoRouter = require('./mongo/mongo')
-const plaidRouter = require('./plaid/plaid')
+const plaidRouter = require('./plaid/plaid').router
 const auth = require('./jwt/jwt')
 const jwtRouter = auth.router
 const {verifyUser} = auth

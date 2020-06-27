@@ -1,7 +1,8 @@
 import { Component, OnInit } from '@angular/core';
-import { Router } from "@angular/router";
-import { PlaidService, AccountReply } from "../plaid.service";
+// import { PlaidService, AccountReply } from "../plaid.service";
 import { MongoService } from "../mongo.service";
+import { InstitutionAccountsInfo } from "../interface";
+import fetch from 'node-fetch';
 
 @Component({
   selector: 'app-home',
@@ -10,47 +11,25 @@ import { MongoService } from "../mongo.service";
 })
 export class HomeComponent implements OnInit {
   private totalInstitutions: number
+  // isLogin: boolean
   fetchedAllInstitutions: boolean
-  noAccount: boolean
-  db: AccountReply[]
+  // noAccount: boolean
+  institutions: InstitutionAccountsInfo[]
 
-  constructor(private router: Router, private plaidService: PlaidService, private mongoService: MongoService) {
-    this.db = []
+  constructor(private mongoService: MongoService) {
+    this.institutions = []
     this.fetchedAllInstitutions = false
   }
 
-  ngOnInit(): void {
-    this.mongoService.getAllAccounts().then(accessTokens => {
-      this.totalInstitutions = accessTokens.length
-
-      if (accessTokens.length == 0) {
-        this.fetchedAllInstitutions = true
-        this.noAccount = true
-      }
-      else
-        accessTokens.forEach(at => {
-          this.plaidService.getAccountsInfo(at).then(accInfo => {
-            this.db.push(accInfo)
-            if (this.db.length == this.totalInstitutions)
-              this.fetchedAllInstitutions = true
-          })
-          .catch(err => {
-            console.error(`Query account info ${at} from Plaid error ` + err)
-          })
-        })
-    })
-    .catch(err => {
-      console.error(err)
-    })
-    // this.plaidService.getAccountsInfo("access-sandbox-ae70d2ed-4f00-4a0d-af84-552cf97e63eb").then(res => {this.db = res})
-    // this.router.navigate(['/'])
-    // async () => {
-    //   this.db = await this.plaidService.getAccounts("access-sandbox-ae70d2ed-4f00-4a0d-af84-552cf97e63eb")
-    //   console.log(this.db)
+  async ngOnInit() {  
+    // if (await this.mongoService.isLogin()) {
+      // this.isLogin = true
+      this.institutions = await this.mongoService.getAllAccounts()
     // }
+    // else {
+      // TODO: Redirect to login page
+    //   this.isLogin = false
+    // }
+    this.fetchedAllInstitutions = true
   }
-
-  // public redirect(): void {
-  //   this.router.navigate(['/'])
-  // }
 }

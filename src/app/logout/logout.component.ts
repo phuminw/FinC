@@ -1,9 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { HttpClient } from "@angular/common/http";
-
-interface BasicReply {
-  success: boolean
-}
+import { SimpleResponse } from "../interface";
 
 @Component({
   selector: 'app-logout',
@@ -15,8 +12,9 @@ export class LogoutComponent implements OnInit {
   constructor(private http: HttpClient) { }
 
   async ngOnInit() {
-    if ((await this.http.post<BasicReply>('/api/user/logout', {}).toPromise()).success)
+    if ((await this.http.post<SimpleResponse>('/api/user/logout', {}).toPromise()).success) {
       window.location.replace('/')
+    }
   }
 
 }

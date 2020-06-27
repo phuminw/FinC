@@ -8,14 +8,20 @@ import { MongoService } from "../mongo.service";
   styleUrls: ['./add-account.component.css']
 })
 export class AddAccountComponent implements OnInit {  
-  noAccount: boolean
+  calledPlaid: boolean
 
   constructor(private plaidService: PlaidService, private mongoService: MongoService) { }
   
   async ngOnInit() {
-    if ((await this.mongoService.getAllAccounts()).length == 0)
-      this.noAccount = true
-    else
-      this.plaidService.getAccessToken()
+    // if (this.mongoService.isLogin()) {
+      // if ((await this.mongoService.getAllAccounts()).length == 0)
+      //   this.noAccount = true
+      // else
+        this.plaidService.getAccessToken()
+        this.calledPlaid = true
+    // }
+    // else {
+    //   // TODO: redirect to login
+    // }
   }
 }

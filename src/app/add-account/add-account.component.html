@@ -1,7 +1,10 @@
-<div *ngIf="noAccount">
+<!-- <div *ngIf="noAccount">
     <h3 class="mat-display-3 noAccountMessage">
         It is quite empty here ...
         <br><br>
         Please add at least one account
     </h3>
+</div> -->
+<div class="spinner" *ngIf="calledPlaid">
+    <mat-spinner color="primary"></mat-spinner>
 </div>
