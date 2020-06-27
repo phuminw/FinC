@@ -15,6 +15,7 @@
 - [ ] Strong password check
 - [ ] Add support for multiple accounts from same institution.
 - [ ] Forgot username/password
+- [ ] View transactions for each account
 
 ## Development server
 
