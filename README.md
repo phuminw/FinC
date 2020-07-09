@@ -41,7 +41,19 @@ Start up frontend
 npm start
 ```
 
-The application should be available at <http://localhost:4200> or the address printed by the above command 
+The application should be available at <http://localhost:4200> or the address printed by the above command
+
+### Plaid
+
+Plaid is used to link financial institutions to the app without letting app receive any sensitive credentials. Visit Plaid and follow the instruction to get API key and other necessary info. Creare file src/server/plaid/key.json with the following structure
+
+```JSON
+{
+    "client_id": "CLIENT_ID",
+    "secret": "SECRET",
+    "public_key": "PUBLIC_KEY"
+}
+```
 
 ## Implementation List
 

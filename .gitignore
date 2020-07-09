@@ -46,3 +46,4 @@ testem.log
 Thumbs.db
 
 src/server/jwt/jwt.config.js
+src/server/plaid/key.json
