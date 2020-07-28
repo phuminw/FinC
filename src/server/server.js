@@ -21,6 +21,9 @@ app.use(cookieParser())
 app.use('/api/user', jwtRouter)
 app.use('/api/db', [verifyUser, mongoRouter]) // Mongo query
 app.use('/api/plaid', [verifyUser, plaidRouter]) // Plaid 
-app.use(express.static(path.join(__dirname, 'dist')))
+app.use('/', express.static(path.join(__dirname, 'dist')))
+app.use('**', (req, res, next) => {
+    res.redirect('/')
+})
 
 app.listen(80, () => {console.log("Express listened")})

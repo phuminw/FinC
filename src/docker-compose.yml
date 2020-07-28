@@ -12,7 +12,7 @@ services:
             - "$PWD/mongo-entrypoint/:/docker-entrypoint-initdb.d/"
         command: mongod
     finc:
-        image: phuminw/finc
+        image: phuminw/finc:1.5.1
         container_name: finc
         depends_on: 
             - mongo
