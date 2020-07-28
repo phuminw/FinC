@@ -1,8 +1,8 @@
 <mat-toolbar color="primary">
   <h1>FinC</h1>
   <button mat-button routerLink="/auth/home">Home</button>
-  <button mat-button routerLink="/auth/addAccount">Add Account</button>
-  <button mat-button routerLink="/auth/removeAccount">Remove Account</button>
+  <button mat-button routerLink="/auth/addAccount" *ngIf="loggedin">Add Account</button>
+  <button mat-button routerLink="/auth/removeAccount" *ngIf="loggedin">Remove Account</button>
   
   <span class="fill-toolbar"></span>
   <span flex></span>
@@ -15,7 +15,7 @@
     <mat-menu #belowMenu="matMenu" yPosition="below">
       <button mat-menu-item routerLink="/login" *ngIf="!loggedin">Login</button>
       <form action="/api/user/logout">
-      <button mat-menu-item routerLink="/auth/logout" *ngIf="loggedin" type="submit">Logout</button>
+      <button mat-menu-item (click)="logout()" *ngIf="loggedin" type="submit">Logout</button>
       </form>
     </mat-menu>
 </mat-toolbar>

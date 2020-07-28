@@ -2,7 +2,24 @@
 
 FinC is a web application built on Angular frontend framework, Express.js backend, and MongoDB database. FinC allows users to easily manage their financial accounts from most US institutions in one place without wasting time logging in on each institution's website.
 
-## Building
+## Docker Way Launching
+
+Instead from building from scratch, Docker can help spinning up Finc with in a few minutes. Before follow the steps below, please make sure Docker is installed. Another thing is to get the Plaid API credentials ready.
+
+1. Navigate to [`src/docker-compose.yml`](src/docker-compose.yml) and copy in Plaid API credentials to appropiate line under finc environment.
+
+2. Put some long random string to `JWT_SECRET` under finc environment.
+
+3. Run commands below in your terminal
+
+```bash
+cd src
+docker-compose up
+```
+
+*Optionally, you are free to MongoDB password that FinC uses to access by changing username and password under finc enviromment in [`src/docker-compose.yml`](src/docker-compose.yml) and [`src/mongo-entrypoint/adduser.sh`](src/mongo-entrypoint/adduser.sh)*
+
+## Building from Scratch
 
 ### MongoDB
 

@@ -4,8 +4,13 @@ const router = express.Router()
 const mongoConnection = require('../mongo/mongo.connection')
 
 const plaid = require('plaid')
-const key = require("./key.json") // Client key
-const plaidClient = new plaid.Client(key.client_id, key.secret, key.public_key, plaid.environments.sandbox) // Plaid client
+// const key = require("./key") // Client key
+const key = {
+    client_id: process.env.PLAID_CLIENT_ID,
+    secret: process.env.PLAID_SECRET,
+    public_key: process.env.PLAID_PUBLIC_KEY
+}
+const plaidClient = new plaid.Client({clientID: key.client_id, secret: key.secret, publicKey: key.public_key, env: plaid.environments.sandbox}) // Plaid client
 
 const bcrypt = require('bcrypt')
 const SALTROUNDS = 10

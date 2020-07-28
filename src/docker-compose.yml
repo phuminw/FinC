@@ -1,0 +1,29 @@
+version: "3.8"
+services: 
+    mongo:
+        image: mongo
+        container_name: mongo
+        environment: 
+            - MONGO_INITDB_ROOT_USERNAME=phuminw
+            - MONGO_INITDB_ROOT_PASSWORD=123654852
+        ports: 
+            - "27017:27017"
+        volumes: 
+            - "$PWD/mongo-entrypoint/:/docker-entrypoint-initdb.d/"
+        command: mongod
+    finc:
+        image: phuminw/finc
+        container_name: finc
+        depends_on: 
+            - mongo
+        environment: 
+            - PLAID_CLIENT_ID=
+            - PLAID_SECRET=
+            - PLAID_PUBLIC_KEY=
+            - JWT_SECRET=
+            - MONGO_FINC_USERNAME=finc
+            - MONGO_FINC_PASSWORD=82fvs1dk
+        ports: 
+            - "80:80"
+        volumes: 
+            - "$PWD/server-entrypoint/:/docker-entrypoint-key.d/"

@@ -4,7 +4,7 @@ let db
 
 let getDb = async () => {
     if (!db) {
-        let db = (await mongo.connect(config.DBURI+config.DBNAME, {useUnifiedTopology: true})).db()
+        let db = (await mongo.connect(config.DBURI+config.DBNAME, {useUnifiedTopology: true, auth: {user: process.env.MONGO_FINC_USERNAME, password: process.env.MONGO_FINC_PASSWORD}})).db()
         // userDb = await db.collection(config.COLLECTION)
         return db
     }

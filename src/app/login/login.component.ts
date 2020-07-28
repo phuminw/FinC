@@ -23,18 +23,11 @@ export class LoginComponent implements OnInit {
   }
 
   async login() {
-    if ((await this.userService.login(this.loginForm.value.username, this.loginForm.value.password))) {
+    if ((await this.userService.login(this.loginForm.value.username, this.loginForm.value.password)) === true) {
       this.router.navigateByUrl('/')
     }
     else {
       this.loginErrorMessage = true
     }
-    // .then(success => {
-    //   if (!success)
-    //     this.loginErrorMessage = true
-    //   else
-    //     window.location.replace('/')
-    // })
-    // .catch(err => console.error(err))
   }
 }

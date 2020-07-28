@@ -1,0 +1,5 @@
+{
+    "client_id": "PLAID_CLIENT_ID",
+    "secret": "PLAID_SECRET",
+    "public_key": "PLAID_PUBLIC_KEY"
+}

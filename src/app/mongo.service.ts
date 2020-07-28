@@ -1,27 +1,12 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from "@angular/common/http";
 import { SimpleResponse, UsernameQueryResponse, AccountsQueryResponse, InstitutionAccountsInfo, InstitutionsSummary, InstitutionSummary } from "./interface";
-
-// interface UserAccountReply {
-//   success: boolean,
-//   accessTokens?: string[]
-// }
-
-// interface DBUpdateReply {
-//   success: boolean
-// }
-
-// interface UsernameReply {
-//   success: boolean,
-//   username?: string
-// }
+import { UserService } from './user.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class MongoService {
-  username: string
-
   constructor(private http: HttpClient) {
   }
 
@@ -32,13 +17,13 @@ export class MongoService {
    */
 
   async isLogin(): Promise<boolean> {
-    return (await this.getUsername()) !== 'Guest'
+    return (await this.getUsername()) !== ''
   }
 
   /**
    * Query username
    * 
-   * @return username or "Guest" if not logged in
+   * @return username or default username if not logged in
    */
 
   async getUsername(): Promise<string> {
@@ -46,20 +31,9 @@ export class MongoService {
       let respoonse = await this.http.get<UsernameQueryResponse>('/api/db/username').toPromise()
       if (respoonse.success)
         return respoonse.username
-    } catch (_) {}
-
-    return "Guest"
-    // return this.http.get<UsernameQueryResponse>('/api/db/getUsername').toPromise()
-    // .then(res => {
-    //   if (res.success)
-    //     return res.username
-    //   else
-    //     return "Guest"
-    // })
-    // .catch(err => {
-    //   console.log(err)
-    //   return "Guest"
-    // })
+    } catch (_) {
+      return ''
+    }
   }
 
   /**
@@ -76,21 +50,6 @@ export class MongoService {
     } catch (_) {}
 
     return [] as InstitutionAccountsInfo[]
-
-    // return this.http.get<UserAccountReply>('/api/db/getAccounts', {params: {username: "phuminw"}}).toPromise()
-    // .then(res => {
-    //   if (res.success) {
-    //     // console.log(res)
-    //     return res.accessTokens
-    //   }
-    //   else {
-    //     return []
-    //   }
-    // })
-    // .catch(err => {
-    //   console.error("Query access token error " + err)
-    //   return []
-    // })
   }
 
   /**

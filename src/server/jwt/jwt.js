@@ -6,7 +6,10 @@ const bcrypt = require('bcrypt')
 const SALTROUNDS = 10
 
 const jwt = require('jsonwebtoken')
-const jwtConfig = require('./jwt.config')
+// const jwtConfig = require('./jwt.config')
+const jwtConfig = {
+    secret: process.env.JWT_SECRET
+}
 
 /* MongoDB */
 const mongoConnection = require('../mongo/mongo.connection')
@@ -18,7 +21,7 @@ const mongoConnection = require('../mongo/mongo.connection')
 router.route('/signup').post(async (req, res, next) => {
     let userDb = await mongoConnection.getCollection('user')
     userDb.find({username: req.body.username}, {projection:{_id:0}}).toArray((err, items) => {
-        if (err !== null) // Interal mongo error
+        if (err !== null) // Internal mongo error
             res.status(500).send({
                 success: false,
                 error: err.message
@@ -33,7 +36,7 @@ router.route('/signup').post(async (req, res, next) => {
             
             userDb.insertOne({
                 username: req.body.username,
-                password: bcrypt.hashSync(req.body.password+salt, SALTROUNDS), // sha256.update(req.body.password+salt).digest('hex'),
+                password: bcrypt.hashSync(req.body.password+salt, SALTROUNDS),
                 salt: salt,
                 accounts: []
             })

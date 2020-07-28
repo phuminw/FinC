@@ -1,0 +1,5 @@
+node_modules/
+server/plaid/key.js
+server/plaid/key.template.json
+server/jwt/jwt.config.js
+server/jwt/jwt.config.template.js

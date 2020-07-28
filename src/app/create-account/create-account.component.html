@@ -1,7 +1,7 @@
-<div class=loginFormContainer>
-    <h3 class="mat-display-3">Login to FinC</h3>
-    <h1 class="mat-display-1" *ngIf="loginErrorMessage" style="color: red;">Invalid username/password</h1>
-    <form [formGroup]="loginForm" (ngSubmit)="login()">
+<div class=signupFormContainer>
+    <h3 class="mat-display-3">Create an account</h3>
+    <h1 class="mat-display-1" *ngIf="signupErrorMessage" style="color: red;">An Error Occurred</h1>
+    <form [formGroup]="new_account_form" (ngSubmit)="signup()">
         <mat-form-field appearance="fill">
             <mat-label>Username</mat-label>
             <input matInput name ="username" formControlName="username">
@@ -15,8 +15,6 @@
             </button>
           </mat-form-field>
           <br>
-          <button mat-raised-button color="primary" type="submit">Login</button>
+          <button mat-raised-button color="primary" type="submit">Create</button>
     </form>
-    <br>
-    <a routerLink="/createAccount"><h3 class="mat-h3">Create account<mat-icon>keyboard_arrow_right</mat-icon></h3></a>
 </div>

@@ -1,4 +1,4 @@
 module.exports = {
-    DBURI: "mongodb://localhost:27017/",
+    DBURI: "mongodb://mongo:27017/",
     DBNAME: "FinC",
     COLLECTION: "user"}

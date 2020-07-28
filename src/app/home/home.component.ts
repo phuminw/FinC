@@ -1,8 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-// import { PlaidService, AccountReply } from "../plaid.service";
 import { MongoService } from "../mongo.service";
 import { InstitutionAccountsInfo } from "../interface";
-import fetch from 'node-fetch';
 
 @Component({
   selector: 'app-home',
@@ -11,9 +9,7 @@ import fetch from 'node-fetch';
 })
 export class HomeComponent implements OnInit {
   private totalInstitutions: number
-  // isLogin: boolean
   fetchedAllInstitutions: boolean
-  // noAccount: boolean
   institutions: InstitutionAccountsInfo[]
 
   constructor(private mongoService: MongoService) {
@@ -22,14 +18,7 @@ export class HomeComponent implements OnInit {
   }
 
   async ngOnInit() {  
-    // if (await this.mongoService.isLogin()) {
-      // this.isLogin = true
-      this.institutions = await this.mongoService.getAllAccounts()
-    // }
-    // else {
-      // TODO: Redirect to login page
-    //   this.isLogin = false
-    // }
+    this.institutions = await this.mongoService.getAllAccounts()
     this.fetchedAllInstitutions = true
   }
 }
