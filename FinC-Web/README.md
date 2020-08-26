@@ -1,4 +1,4 @@
-# FinC
+# FinC on Web
 
 FinC is a web application built on Angular frontend framework, Express.js backend, and MongoDB database. FinC allows users to easily manage their financial accounts from most US institutions in one place without wasting time logging in on each institution's website.
 
